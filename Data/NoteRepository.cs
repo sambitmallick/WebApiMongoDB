@@ -17,7 +17,13 @@ namespace NotebookAppApi.Data
 
         public NoteRepository(IOptions<Settings> settings)
         {
-            _context = new NoteContext(settings);
+           try
+            {
+                _context = new NoteContext(settings);
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public async Task<IEnumerable<Note>> GetAllNotes()
