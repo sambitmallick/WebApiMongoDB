@@ -1,0 +1,25 @@
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace NotebookAppApi.Controllers
+{
+    [Route("api/[controller]")]
+    public class HealthController : Controller
+    {
+        public IActionResult Index()
+        {
+            return Ok("All Ok");
+        }
+    }
+    [Route("api/[controller]")]
+    public class Health2Controller : Controller
+    {
+        public IActionResult Index()
+        {
+            return Ok("Notes API Health Ok");
+        }
+    }
+}
