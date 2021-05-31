@@ -12,64 +12,59 @@ namespace NotebookAppApi.Controllers
     [Route("api/[controller]")]
     public class NotesController : Controller
     {
-        private readonly INoteRepository _noteRepository;
-
-        public NotesController(INoteRepository noteRepository)
-        {
-            _noteRepository = noteRepository;
-        }
+        private   AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
         [NoCache]
         [HttpGet]
-        public async Task<IEnumerable<Note>> Get()
+        public async Task<IEnumerable<DynamoNote>> Get()
         {
-            return await _noteRepository.GetAllNotes();
+            //var request = new QueryRequest
+            //{
+            //    TableName = "Reply",
+            //    KeyConditionExpression = "Id = :v_Id",
+            //    //        ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
+            //    //{":v_Id", new AttributeValue { S =  "Amazon DynamoDB#DynamoDB Thread 1" }}}
+
+            //};
+            DynamoDBContext context = new DynamoDBContext(client);
+            //var items = await context.
+
+
+            var conditions = new List<ScanCondition>();
+            // you can add scan conditions, or leave empty
+            var allDocs = await context.ScanAsync<DynamoNote>(conditions).GetRemainingAsync();
+            return allDocs;
         }
 
-        // GET api/notes/5
-        [HttpGet("{id}")]
-        public async Task<Note> Get(string id)
-        {
-            return await _noteRepository.GetNote(id) ?? new Note();
-        }
-
-        // GET api/notes/text/date/size
-        // ex: http://localhost:53617/api/notes/Test/2018-01-01/10000
         [NoCache]
-        [HttpGet(template: "{bodyText}/{updatedFrom}/{headerSizeLimit}")]
-        public async Task<IEnumerable<Note>> Get(string bodyText, 
-                                                 DateTime updatedFrom, 
-                                                 long headerSizeLimit)
+        [HttpGet("{id}")]
+        public async Task<DynamoNote> Get(int id)
         {
-            return await _noteRepository.GetNote(bodyText, updatedFrom, headerSizeLimit) 
-                        ?? new List<Note>();
+            DynamoDBContext context = new DynamoDBContext(client);
+            if (id > 0)
+            { 
+                var item = await context.LoadAsync<DynamoNote>(id);
+                return item;
+            }
+            throw new ArgumentException("Id should be greater than zero");
         }
 
         // POST api/notes
         [HttpPost]
-        public void Post([FromBody] NoteParam newNote)
+        public async Task<string> PostAsync([FromBody] DynamoNote newNote)
         {
-            _noteRepository.AddNote(new Note
-                                        {
-                                            Id = newNote.Id,
-                                            Body = newNote.Body,
-                                            UpdatedOn = DateTime.Now,
-                                            UserId = newNote.UserId
-                                        });
-        }
-
-        // PUT api/notes/5
-        [HttpPut("{id}")]
-        public void Put(string id, [FromBody]string value)
-        {
-            _noteRepository.UpdateNoteDocument(id, value);
-        }
-
-        // DELETE api/notes/23243423
-        [HttpDelete("{id}")]
-        public void Delete(string id)
-        {
-            _noteRepository.RemoveNote(id);
+            if (newNote.Id <= 0) return "Bad Request: Id less than 0";
+            try
+            {
+                DynamoDBContext context = new DynamoDBContext(client);
+                await context.SaveAsync<DynamoNote>(newNote);
+                return "Ok";
+            }
+            catch(Exception ex)
+            {
+                System.Console.WriteLine(ex.Message);
+                return "Error";
+            }
         }
     }
 }
