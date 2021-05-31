@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc;
-using NotebookAppApi.Interfaces;
-using NotebookAppApi.Model;
 using NotebookAppApi.Infrastructure;
+using NotebookAppApi.Model;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NotebookAppApi.Controllers
 {
