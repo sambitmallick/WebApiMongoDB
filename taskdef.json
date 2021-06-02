@@ -64,7 +64,7 @@
     "EC2",
     "FARGATE"
   ],
-  "taskDefinitionArn": "arn:aws:ecs:eu-west-2:953361230125:task-definition/webapi:3",
+  "taskDefinitionArn": "arn:aws:ecs:eu-west-2:953361230125:task-definition/webapi:9",
   "family": "webapi",
   "requiresAttributes": [
     {
