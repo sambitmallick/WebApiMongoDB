@@ -13,5 +13,13 @@ namespace NotebookAppApi.Controllers
         {
             return Ok("OK");
         }
+        [Route("/health")]
+        public IActionResult Health()
+        {
+            return Ok("OK");
+        }
+        
     }
+    
+    
 }
