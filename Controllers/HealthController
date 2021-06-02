@@ -11,7 +11,7 @@ namespace NotebookAppApi.Controllers
     {
         public IActionResult Index()
         {
-            return Ok("All Ok");
+            return Ok("Ok");
         }
     }
     [Route("api/[controller]")]
